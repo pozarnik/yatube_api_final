@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from datetime import datetime
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 from posts.models import Comment, Post, Group, Follow
 
@@ -25,6 +27,7 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ('id', 'author', 'text', 'created', 'post')
         read_only_fields = ('post',)
+        
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -34,8 +37,11 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class FollowSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(
-        read_only=True, default=serializers.CurrentUserDefault())
+    user = serializers.StringRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+    following = serializers.StringRelatedField(read_only=True)
+
     class Meta:
         fields = ('user', 'following')
         model = Follow
+
+

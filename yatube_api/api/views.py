@@ -1,21 +1,20 @@
 from datetime import datetime
-from rest_framework import viewsets
-from rest_framework import permissions
-from .pagination import PostPagination
-from rest_framework import serializers
+
 from rest_framework import filters
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import permissions
+from rest_framework import viewsets
 
 from posts.models import Group, Post, Comment, Follow
+from .pagination import PostPagination
 from .permissions import AuthorOrReadOnly
 from .serializers import PostSerializer, GroupSerializer, CommentSerializer, FollowSerializer
+
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [AuthorOrReadOnly]
     pagination_class = PostPagination
-
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user, pub_date=datetime.now())
@@ -26,11 +25,9 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = GroupSerializer
 
 
-
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [AuthorOrReadOnly]
-
 
     def get_queryset(self):
         post_id = self.kwargs.get("post_id")
@@ -49,7 +46,6 @@ class FollowViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('following__username',)
 
-
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
@@ -57,4 +53,3 @@ class FollowViewSet(viewsets.ModelViewSet):
         user = self.request.user
         new_queryset = Follow.objects.filter(user=user)
         return new_queryset
-

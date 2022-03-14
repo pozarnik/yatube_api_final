@@ -8,12 +8,11 @@ from posts.models import Comment, Post, Group, Follow, User
 class PostSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField(
         read_only=True, default=serializers.CurrentUserDefault())
-    pub_date = serializers.DateTimeField(
-        read_only=True, default=datetime.now())
 
     class Meta:
-        fields = ('id', 'author', 'text', 'pub_date', 'image', 'group')
         model = Post
+        fields = '__all__'
+        read_only_fields = ('pub_date',)
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -24,26 +23,30 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ('id', 'author', 'text', 'created', 'post')
+        fields = '__all__'
         read_only_fields = ('post',)
 
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('id', 'title', 'slug', 'description')
         model = Group
+        fields = '__all__'
 
 
 class FollowSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+    user = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
     following = serializers.SlugRelatedField(
         slug_field='username',
         queryset=User.objects.all()
     )
 
     class Meta:
-        fields = ('user', 'following')
         model = Follow
+        fields = ('user', 'following')
 
         validators = (
             serializers.UniqueTogetherValidator(

@@ -6,7 +6,7 @@ from rest_framework import permissions
 from rest_framework import viewsets
 from rest_framework import mixins
 
-from posts.models import Group, Post, Comment, Follow
+from posts.models import Group, Post, Comment, Follow, User
 from .pagination import PostPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import PostSerializer, GroupSerializer, CommentSerializer, FollowSerializer
@@ -53,6 +53,6 @@ class FollowViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.Gen
         serializer.save(user=self.request.user)
 
     def get_queryset(self):
-        user = self.request.user
-        new_queryset = Follow.objects.filter(user=user)
+        user = User.objects.get(username=self.request.user)
+        new_queryset = user.follower.all()
         return new_queryset

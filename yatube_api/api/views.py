@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.shortcuts import get_object_or_404
 from rest_framework import filters
 from rest_framework import mixins
@@ -7,7 +5,7 @@ from rest_framework import permissions
 from rest_framework import viewsets
 from rest_framework.pagination import LimitOffsetPagination
 
-from posts.models import Group, Post, Comment, User
+from posts.models import Group, Post
 from .permissions import IsAuthorOrReadOnly
 from .serializers import PostSerializer, GroupSerializer, CommentSerializer, FollowSerializer
 
@@ -19,7 +17,7 @@ class PostViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user, pub_date=datetime.now())
+        serializer.save(author=self.request.user)
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
@@ -34,13 +32,13 @@ class CommentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         post_id = self.kwargs.get("post_id")
         post = get_object_or_404(Post, id=post_id)
-        new_queryset = Comment.objects.filter(post=post)
+        new_queryset = post.comments.all()
         return new_queryset
 
     def perform_create(self, serializer):
         post_id = self.kwargs.get("post_id")
         post = get_object_or_404(Post, id=post_id)
-        serializer.save(author=self.request.user, created=datetime.now(), post=post)
+        serializer.save(author=self.request.user, post=post)
 
 
 class FollowViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -53,6 +51,6 @@ class FollowViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.Gen
         serializer.save(user=self.request.user)
 
     def get_queryset(self):
-        user = User.objects.get(username=self.request.user)
+        user = self.request.user
         new_queryset = user.follower.all()
         return new_queryset

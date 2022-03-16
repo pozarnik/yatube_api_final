@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from rest_framework import serializers
 
 from posts.models import Comment, Post, Group, Follow, User
@@ -18,13 +16,11 @@ class PostSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField(
         read_only=True, default=serializers.CurrentUserDefault())
-    created = serializers.DateTimeField(
-        read_only=True, default=datetime.now())
 
     class Meta:
         model = Comment
         fields = '__all__'
-        read_only_fields = ('post',)
+        read_only_fields = ('post', 'created')
 
 
 class GroupSerializer(serializers.ModelSerializer):

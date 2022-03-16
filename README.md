@@ -39,6 +39,9 @@ http://127.0.0.1:8000/redoc/
 ```
 ### Авторы
 [pozarnik][link]
+
 ## License
+
 MIT
+
    [link]: <https://github.com/pozarnik/>

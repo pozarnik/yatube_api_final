@@ -13,11 +13,11 @@ API для проекта [YaTube](https://github.com/pozarnik/yatube)
 Клонировать репозиторий и перейти в него в командной строке:
 
 ```
-git clone https://github.com/pozarnik/api_final_yatube.git
+git clone https://github.com/pozarnik/yatube_api_final.git
 ```
 
 ```
-cd api_final_yatube
+cd yatube_api_final
 ```
 
 Cоздать и активировать виртуальное окружение:
